@@ -1,0 +1,39 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Balls probability</title>
+    <style>
+    	* { background: #888; }
+    	canvas { background: #fff; }
+    	input { background: #eee; }
+    	button { background: #0e0; }
+    </style>
+</head>
+<body>
+
+<table border="0">
+<tr>
+	<td width = "650">
+		<canvas id="hDc" width="640" height="480"></canvas>
+	</td>
+	
+	<td valign = "bottom">
+		<p>Графика: <button onclick="go()">Draw</button></p>
+		
+		<table border="0">
+			<tr><td> m = </td><td><input id="input_m"></td></tr>
+			<tr><td> r = </td><td><input id="input_r"></td></tr>
+			<tr><td> l = </td><td><input id="input_l"></td></tr>
+			<tr><td> n = </td><td><input id="input_n"></td></tr>
+			<tr><td> &epsilon; = </td><td><input id="input_eps"></td></tr>
+			<tr><td> N = </td><td><input id="input_N"></td></tr>
+		</table>
+	</td>
+</tr>
+</table>
+
+<script type="text/javascript" src = "math.js"></script>
+<script type="text/javascript" src = "plot.js"></script>
+
+</body>
+</html>
