@@ -15,20 +15,20 @@ input_eps.value = "0.01";
 input_N.value = "10";
 
 //plot graph
-function plot(m, r, l, n, eps)
+function plot(m, r, l, n, eps, N)
 {
 	//setup canvas
 	hdc.clearRect(0, 0, width, height);
 	hdc.font = "14px Arial";
 	
 	//check inputs
-	if (m != m || r != r || l != l || n != n || eps != eps) //user inputed not a number
+	if (m != m || r != r || l != l || n != n || eps != eps || N != N) //user inputed not a number
 	{
 		return;
 	}
 	
 	//draw axis
-	let drawRect = { x0: 32, x1: 32+(width-64)/n, y1: 32, x2: width-32, y2: height-32 };
+	let drawRect = { x0: 32, x1: 32+(width-64)/n, y1: 32, x2: width-32, y2: height-32, w: width-64, h: height-64 };
 	let off = 20;
 	
 	//zero
@@ -38,7 +38,6 @@ function plot(m, r, l, n, eps)
 	
 	//x
 	hdc.strokeStyle = "black";
-	hdc.lineWidth = 1;
 	
 	hdc.beginPath();
 	hdc.moveTo(drawRect.x2 + off, drawRect.y2);
@@ -87,11 +86,54 @@ function plot(m, r, l, n, eps)
 	hdc.fillText("1", drawRect.x0 - off/2 - 2, drawRect.y1 + 2);
 	
 	//graph itself
+	let v = experiment(m, r, l, n);
+	
+	hdc.strokeStyle = "red";
+	
+	hdc.beginPath();
+	hdc.moveTo(drawRect.x1, drawRect.y2 - drawRect.h * v[0]);
+	for (let i = 1; i < n; i++) hdc.lineTo(drawRect.x0 + (i + 1) * drawRect.w / n, drawRect.y2 - drawRect.h * v[i]);
+	hdc.stroke();
+	
+	//draw correct probability
+	let p = probability(m, r, l);
+	
+	hdc.strokeStyle = "blue";
+	hdc.beginPath();
+	hdc.moveTo(drawRect.x0, drawRect.y2 - drawRect.h * p);
+	hdc.lineTo(drawRect.x2, drawRect.y2 - drawRect.h * p);
+	hdc.stroke();
+	
+	hdc.setLineDash([5, 5]);
+	hdc.beginPath();
+	hdc.moveTo(drawRect.x0, drawRect.y2 - drawRect.h * (p - eps));
+	hdc.lineTo(drawRect.x2, drawRect.y2 - drawRect.h * (p - eps));
+	hdc.moveTo(drawRect.x0, drawRect.y2 - drawRect.h * (p + eps));
+	hdc.lineTo(drawRect.x2, drawRect.y2 - drawRect.h * (p + eps));
+	hdc.stroke();
+	
+	//draw fitted interval
+	let n1 = findN(N, v, p, eps);
+	if (n1 == n1) //found
+	{
+		hdc.strokeStyle = "green";
+		hdc.beginPath();
+		hdc.moveTo(drawRect.x0 + drawRect.w * n1 / n, drawRect.y1);
+		hdc.lineTo(drawRect.x0 + drawRect.w * n1 / n, drawRect.y2);
+		hdc.moveTo(drawRect.x0 + drawRect.w * (n1 + N) / n, drawRect.y1);
+		hdc.lineTo(drawRect.x0 + drawRect.w * (n1 + N) / n, drawRect.y2);
+		hdc.stroke();
+	}
+	hdc.setLineDash([]);
+	
+	//draw found values
+	hdc.textBaseline = "top";
+	hdc.fillText("P(A)=" + p + ", n=" + n1, width - 2, 2);
 }
 
 function go()
 {
 	plot(parseInt(input_m.value), parseInt(input_r.value), parseInt(input_l.value),
-		parseInt(input_n.value), parseFloat(input_eps.value));
+		parseInt(input_n.value), parseFloat(input_eps.value), parseFloat(input_N.value));
 }
 go();

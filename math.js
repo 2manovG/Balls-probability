@@ -51,9 +51,23 @@ function Pk(m, r, l, k)
 function probability(m, r, l)
 {
 	let b1 = Math.max(1, Math.floor((l - m) / 2) * 2 + 1);
-	let b2 = Math.floor(Math.min(r, l)) * 2 - 1;
+	let b2 = Math.floor((Math.min(r, l) + 1) / 2) * 2 - 1;
 	
 	let p = 0; //probability
 	for (let k = b1; k <= b2; k += 2) p += Pk(m, r, l, k);
 	return p;
+}
+
+//find n, from which...
+function checkN(n, N, v, p, eps)
+{
+	for (let i = n; i < n + N; i++)
+		if (Math.abs(v[i] - p) > eps) return false;
+	return true;
+}
+function findN(N, v, p, eps)
+{
+	for (let i = 0; i < v.length - N; i++)
+		if (checkN(i, N, v, p, eps)) return i;
+	return undefined;
 }
