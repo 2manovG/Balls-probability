@@ -11,7 +11,7 @@ var input_eps = document.getElementById("input_eps");
 var input_N = document.getElementById("input_N");
 input_m.value = input_r.value = input_l.value = "8";
 input_n.value = "100";
-input_eps.value = "0.01";
+input_eps.value = "0.1";
 input_N.value = "10";
 
 //plot graph
@@ -128,6 +128,7 @@ function plot(m, r, l, n, eps, N)
 	
 	//draw found values
 	hdc.textBaseline = "top";
+	hdc.font = "18px Arial";
 	hdc.fillText("P(A)=" + p + ", n=" + n1, width - 2, 2);
 }
 
