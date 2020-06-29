@@ -116,7 +116,7 @@ function plot(m, r, l, n, eps, N)
 	let n1 = findN(N, v, p, eps);
 	if (n1 == n1) //found
 	{
-		hdc.strokeStyle = "green";
+		hdc.strokeStyle = "#0a0";
 		hdc.beginPath();
 		hdc.moveTo(drawRect.x0 + drawRect.w * n1 / n, drawRect.y1);
 		hdc.lineTo(drawRect.x0 + drawRect.w * n1 / n, drawRect.y2);
