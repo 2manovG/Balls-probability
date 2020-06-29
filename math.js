@@ -1,17 +1,12 @@
 //get value of ksi
 function getKsi(m, r, l)
 {
-	//set of balls
-	let balls = [];
-	for (let i = 0; i < m; i++) balls.push(0); //white balls
-	for (let i = 0; i < r; i++) balls.push(1); //black balls
+	let p = r / (r + m); //probability of black ball
 	
-	//find value of ksi
-	let ksi = 0;
+	let ksi = 0; //value of ksi
 	for (let i = 0; i < l; i++)
 	{
-		//remove random ball and add it's value to ksi
-		ksi += balls.splice(Math.floor(Math.random() * balls.length), 1)[0];
+		if (Math.random() < p) ksi++;
 	}
 	return ksi;
 }
@@ -44,17 +39,16 @@ function C(k, n)
 //find P(ksi = k)
 function Pk(m, r, l, k)
 {
-	if (k < l-m || k > r || k > l) return 0;
-	return C(l-k,m)*C(k,r)/C(l,m+r);
+	if (k > l) return 0;
+	return C(k, l) * Math.pow(r, k) * Math.pow(m, l - k) / Math.pow(m + r, l);
 }
 //find P(A)
 function probability(m, r, l)
 {
-	let b1 = Math.max(1, Math.floor((l - m) / 2) * 2 + 1);
-	let b2 = Math.floor((Math.min(r, l) + 1) / 2) * 2 - 1;
+	let kmax = Math.floor((l - 1) / 2); //upper limit of summing
 	
 	let p = 0; //probability
-	for (let k = b1; k <= b2; k += 2) p += Pk(m, r, l, k);
+	for (let k = 0; k <= kmax; k++) p += Pk(m, r, l, 2 * k + 1);
 	return p;
 }
 
