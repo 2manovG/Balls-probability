@@ -92,7 +92,7 @@ function plot(n, m, count, i)
 	hdc.strokeStyle = "red";
 	
 	hdc.beginPath();
-	hdc.moveTo(drawRect.x1, drawRect.y2 - drawRect.h * v[0]);
+	hdc.moveTo(drawRect.x1, drawRect.y2 - drawRect.h * v[0] * ymul);
 	for (let i = 1; i < count; i++) hdc.lineTo(drawRect.x0 + (i + 1) * drawRect.w / count, drawRect.y2 - drawRect.h * v[i] * ymul);
 	hdc.stroke();
 	
