@@ -4,31 +4,32 @@ var width = canvas.width;
 var height = canvas.height;
 
 var input_m = document.getElementById("input_m");
-var input_r = document.getElementById("input_r");
-var input_l = document.getElementById("input_l");
 var input_n = document.getElementById("input_n");
-var input_eps = document.getElementById("input_eps");
-var input_N = document.getElementById("input_N");
-input_m.value = input_r.value = input_l.value = "8";
-input_n.value = "100";
-input_eps.value = "0.1";
-input_N.value = "10";
+var input_count = document.getElementById("input_count");
+input_m.value = input_n.value = "3";
+input_count.value = "100";
+
+var radio1 = document.getElementById("graph1");
+var radio2 = document.getElementById("graph2");
+var radio3 = document.getElementById("graph3");
+radio1.checked = true;
 
 //plot graph
-function plot(m, r, l, n, eps, N)
+function plot(n, m, count, i)
 {
 	//setup canvas
 	hdc.clearRect(0, 0, width, height);
 	hdc.font = "14px Arial";
 	
 	//check inputs
-	if (m != m || r != r || l != l || n != n || eps != eps || N != N) //user inputed not a number
+	if (n != n || m != m || count != count) //user inputed not a number
 	{
 		return;
 	}
+	let ymul = [1, 1/n, 1/n][i];
 	
 	//draw axis
-	let drawRect = { x0: 32, x1: 32+(width-64)/n, y1: 32, x2: width-32, y2: height-32, w: width-64, h: height-64 };
+	let drawRect = { x0: 32, x1: 32+(width-64)/count, y1: 32, x2: width-32, y2: height-32, w: width-64, h: height-64 };
 	let off = 20;
 	
 	//zero
@@ -63,7 +64,7 @@ function plot(m, r, l, n, eps, N)
 	hdc.lineTo(drawRect.x2, drawRect.y2 + off/2);
 	hdc.stroke();
 	
-	hdc.fillText(n, drawRect.x2, drawRect.y2 + off/2 + 2);
+	hdc.fillText(count, drawRect.x2, drawRect.y2 + off/2 + 2);
 	
 	//y
 	hdc.beginPath();
@@ -83,58 +84,40 @@ function plot(m, r, l, n, eps, N)
 	
 	hdc.textAlign = "right";
 	hdc.textBaseline = "middle";
-	hdc.fillText("1", drawRect.x0 - off/2 - 2, drawRect.y1 + 2);
+	hdc.fillText(["1", "n", "n"][i], drawRect.x0 - off/2 - 2, drawRect.y1 + 2);
 	
 	//graph itself
-	let v = experiment(m, r, l, n);
+	let v = experiment(n, m, count)[i];
 	
 	hdc.strokeStyle = "red";
 	
 	hdc.beginPath();
 	hdc.moveTo(drawRect.x1, drawRect.y2 - drawRect.h * v[0]);
-	for (let i = 1; i < n; i++) hdc.lineTo(drawRect.x0 + (i + 1) * drawRect.w / n, drawRect.y2 - drawRect.h * v[i]);
+	for (let i = 1; i < count; i++) hdc.lineTo(drawRect.x0 + (i + 1) * drawRect.w / count, drawRect.y2 - drawRect.h * v[i] * ymul);
 	hdc.stroke();
 	
-	//draw correct probability
-	let p = probability(m, r, l);
+	//draw correct pmd
+	let pmd = correct_pmd(n, m)[i];
 	
 	hdc.strokeStyle = "blue";
 	hdc.beginPath();
-	hdc.moveTo(drawRect.x0, drawRect.y2 - drawRect.h * p);
-	hdc.lineTo(drawRect.x2, drawRect.y2 - drawRect.h * p);
+	hdc.moveTo(drawRect.x0, drawRect.y2 - drawRect.h * pmd * ymul);
+	hdc.lineTo(drawRect.x2, drawRect.y2 - drawRect.h * pmd * ymul);
 	hdc.stroke();
-	
-	hdc.setLineDash([5, 5]);
-	hdc.beginPath();
-	hdc.moveTo(drawRect.x0, drawRect.y2 - drawRect.h * (p - eps));
-	hdc.lineTo(drawRect.x2, drawRect.y2 - drawRect.h * (p - eps));
-	hdc.moveTo(drawRect.x0, drawRect.y2 - drawRect.h * (p + eps));
-	hdc.lineTo(drawRect.x2, drawRect.y2 - drawRect.h * (p + eps));
-	hdc.stroke();
-	
-	//draw fitted interval
-	let n1 = findN(N, v, p, eps);
-	if (n1 == n1) //found
-	{
-		hdc.strokeStyle = "#0a0";
-		hdc.beginPath();
-		hdc.moveTo(drawRect.x0 + drawRect.w * n1 / n, drawRect.y1);
-		hdc.lineTo(drawRect.x0 + drawRect.w * n1 / n, drawRect.y2);
-		hdc.moveTo(drawRect.x0 + drawRect.w * (n1 + N) / n, drawRect.y1);
-		hdc.lineTo(drawRect.x0 + drawRect.w * (n1 + N) / n, drawRect.y2);
-		hdc.stroke();
-	}
-	hdc.setLineDash([]);
 	
 	//draw found values
 	hdc.textBaseline = "top";
 	hdc.font = "18px Arial";
-	hdc.fillText("P(A)=" + p + ", n=" + n1, width - 2, 2);
+	hdc.fillText("PMD"[i] + "(A)=" + pmd, width - 2, 2);
 }
 
 function go()
 {
-	plot(parseInt(input_m.value), parseInt(input_r.value), parseInt(input_l.value),
-		parseInt(input_n.value), parseFloat(input_eps.value), parseFloat(input_N.value));
+	let i = 0;
+	if (radio2.checked) i = 1;
+	else if (radio3.checked) i = 2;
+	
+	//console.log(radio1.checked, radio2.checked, radio3.checked, i);
+	plot(parseInt(input_n.value), parseInt(input_m.value), parseInt(input_count.value), i);
 }
 go();

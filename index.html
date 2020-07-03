@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Balls probability</title>
+    <title>Marks probability</title>
     <style>
     	* { background: #888; }
     	canvas { background: #fff; }
@@ -18,15 +18,21 @@
 	</td>
 	
 	<td valign = "bottom">
-		<p>Графика: <button onclick="go()">Draw</button></p>
+		<div>
+			<input type="radio" id="graph1" name="graph" value="p" onclick="go()" checked>
+			<label for="graph1">Вероятность</label> </br>
+			<input type="radio" id="graph2" name="graph" value="m" onclick="go()">
+			<label for="graph2">Мат.ожидание</label> </br>
+			<input type="radio" id="graph3" name="graph" value="d" onclick="go()">
+			<label for="graph3">Дисперсия</label> </br>
+		</div>
+	
+		<p>График: <button onclick="go()">Draw</button></p>
 		
 		<table border="0">
-			<tr><td> m = </td><td><input id="input_m"></td></tr>
-			<tr><td> r = </td><td><input id="input_r"></td></tr>
-			<tr><td> l = </td><td><input id="input_l"></td></tr>
 			<tr><td> n = </td><td><input id="input_n"></td></tr>
-			<tr><td> &epsilon; = </td><td><input id="input_eps"></td></tr>
-			<tr><td> N = </td><td><input id="input_N"></td></tr>
+			<tr><td> m = </td><td><input id="input_m"></td></tr>
+			<tr><td> count = </td><td><input id="input_count"></td></tr>
 		</table>
 	</td>
 </tr>

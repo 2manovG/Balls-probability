@@ -1,34 +1,33 @@
 //get value of ksi
-function getKsi(m, r, l)
+function getKsi(n, m)
 {
-	let p = r / (r + m); //probability of black ball
+	let marks = [];
+	for (let i = 0; i < m; i++) marks.push(Math.floor(Math.random() * n));
 	
-	let ksi = 0; //value of ksi
-	for (let i = 0; i < l; i++)
-	{
-		if (Math.random() < p) ksi++;
-	}
-	return ksi;
+	return new Set(marks).size;
 }
 
 //carry out n experiments
-function experiment(m, r, l, n) //generate array [v1, v2, ..., vn]
+function experiment(n, m, count) //generate array [[p1, p2, ..., pn], [m1, m2, ..., mn], [d1, d2, ..., dn]]
 {
-	let successes = 0; //ammount of successfull experiments
-	let v = []; //array of frequences
+	let successes = 0, summ = 0, summSqr = 0; //ammount of successfull experiments
+	let v = [[], [], []]; //array of p, m and d
 	
-	for (let i = 1; i <= n; i++)
+	for (let i = 1; i <= count; i++)
 	{
-		//we need to add to successes variable 1 if A and 0 if not A
-		//A means ksi is odd
-		//so we just add (ksi mod 2) to successes each time
-		successes += getKsi(m, r, l) % 2;
-		v.push(successes / i);
+		let ksi = getKsi(n, m);
+		successes += (ksi == n);
+		summ += ksi;
+		summSqr += ksi * ksi;
+		
+		v[0].push(successes / i);
+		v[1].push(summ / i);
+		v[2].push(summSqr / i - summ * summ / i / i);
 	}
 	return v;
 }
 
-//now we need to find propper value of probability
+//now we need to find propper value of p, m and d
 //find C(k, n)
 function C(k, n)
 {
@@ -36,32 +35,16 @@ function C(k, n)
 	for (let i = 1; i <= k; i++) c *= (n - k + i) / i;
 	return c;
 }
-//find P(ksi = k)
-function Pk(m, r, l, k)
-{
-	if (k > l) return 0;
-	return C(k, l) * Math.pow(r, k) * Math.pow(m, l - k) / Math.pow(m + r, l);
-}
 //find P(A)
-function probability(m, r, l)
+function correct_pmd(n, m)
 {
-	let kmax = Math.floor((l - 1) / 2); //upper limit of summing
-	
 	let p = 0; //probability
-	for (let k = 0; k <= kmax; k++) p += Pk(m, r, l, 2 * k + 1);
-	return p;
-}
-
-//find n, from which...
-function checkN(n, N, v, p, eps)
-{
-	for (let i = n; i < n + N; i++)
-		if (Math.abs(v[i] - p) > eps) return false;
-	return true;
-}
-function findN(N, v, p, eps)
-{
-	for (let i = 0; i < v.length - N; i++)
-		if (checkN(i, N, v, p, eps)) return i;
-	return undefined;
+	for (let k = 0; k <= n; k++) p += (1 - k % 2 * 2) * C(k, n) * Math.pow(1 - k/n, m);
+	
+	let e = n * (1 - Math.pow((n - 1) / n, m)); //expectation
+	
+	let d = Math.pow(n - 1, m) / Math.pow(n, m - 1) * (1 - Math.pow((n - 1) / n, m)) +
+		(n - 1) / Math.pow(n, m - 1) * (Math.pow(n - 2, m) - Math.pow(n - 1, 2*m) / Math.pow(n, m)); //dispersion
+	
+	return [p, e, d];
 }
